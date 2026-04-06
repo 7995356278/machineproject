@@ -51,3 +51,6 @@ for i, feature in enumerate(features):
 
 plt.tight_layout()
 plt.show()
+
+import joblib
+joblib.dump(model, "model.pkl")
