@@ -3,6 +3,7 @@ import joblib
 import numpy as np
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import HTMLResponse
+from pydantic import BaseModel
 
 app = FastAPI()
 
@@ -20,14 +21,20 @@ model = joblib.load("model.pkl")
 def home():
     with open("mlfp/index.html", encoding="utf-8") as f:
         return f.read()
+    
+class InputData(BaseModel):
+    temperature: float
+    vibration: float
+    pressure: float
+    hours_used: float    
 
 @app.post("/predict")
-def predict(data: dict):
+def predict(data: InputData):
     values = np.array([
-        data["temperature"],
-        data["vibration"],
-        data["pressure"],
-        data["hours_used"]
+        data.temperature,
+        data.vibration,
+        data.pressure,
+        data.hours_used
     ]).reshape(1, -1)
 
     prediction = model.predict(values)[0]

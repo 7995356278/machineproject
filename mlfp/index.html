@@ -70,16 +70,33 @@ document.getElementById("form").addEventListener("submit", async (e) => {
         hours_used: +document.getElementById("hours_used").value
     };
 
-    const res = await fetch("http://127.0.0.1:8000/predict", {
-        method: "POST",
-        headers: {"Content-Type": "application/json"},
-        body: JSON.stringify(data)
-    });
+    try {
+        document.getElementById("result").innerText = "Predicting...";
 
-    const result = await res.json();
+        const res = await fetch("/predict", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(data)
+        });
 
-    document.getElementById("result").innerText =
-        result.prediction === 1 ? "⚠️ Failure Likely" : "✅ Machine Safe";
+        if (!res.ok) {
+            const text = await res.text();
+            throw new Error(text);
+        }
+
+        const result = await res.json();
+
+        document.getElementById("result").innerText =
+            result.prediction === 1
+            ? "⚠️ Failure Likely"
+            : "✅ Machine Safe";
+
+    } catch (err) {
+        console.error(err);
+        document.getElementById("result").innerText = "Error: " + err.message;
+    }
 });
 </script>
 
