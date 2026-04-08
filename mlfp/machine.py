@@ -55,4 +55,3 @@ plt.show()
 import joblib
 joblib.dump(model, "model.pkl")
 
-joblib.save(model,"model.pk1")
